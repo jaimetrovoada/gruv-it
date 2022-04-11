@@ -25,7 +25,7 @@ func HandleUpload(w http.ResponseWriter, r *http.Request) {
 	defer file.Close()
 
 	// print the request header
-	fmt.Fprintf(w, "%v\n", handler.Header)
+	// fmt.Fprintf(w, "%v\n", handler.Header)
 
 	saveFile, err := os.OpenFile("./uploads/"+handler.Filename, os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
@@ -45,8 +45,6 @@ func main() {
 
 	// start server
 	http.HandleFunc("/upload", HandleUpload)
-	if err := http.ListenAndServe(":8080", nil); err != nil {
-		log.Fatal(err)
-	}
+	log.Fatal(http.ListenAndServe(":8080", nil))
 
 }
