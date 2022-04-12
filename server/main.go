@@ -2,49 +2,58 @@ package main
 
 import (
 	"fmt"
-	"io"
-	"log"
+	"io/ioutil"
 	"net/http"
-	"os"
+
+	"github.com/gin-gonic/gin"
 )
 
-// open a connection (create the server)
-// listen to incoming POST requests on a given route
-// create a temp file
-// save data (bytes) into the file
+func HandleUpload(c *gin.Context) {
 
-func HandleUpload(w http.ResponseWriter, r *http.Request) {
-	r.ParseMultipartForm(32 << 20)
+	file, _ := c.FormFile("uploadImg")
 
-	file, handler, err := r.FormFile("uploadImg")
-	if err != nil {
-		fmt.Println("Error Retrieving the File")
-		log.Fatal(err)
-		return
-	}
-	defer file.Close()
+	// Upload the file to specific dst.
+	c.SaveUploadedFile(file, "./uploads/"+file.Filename)
 
-	// print the request header
-	// fmt.Fprintf(w, "%v\n", handler.Header)
+	c.String(http.StatusAccepted, fmt.Sprintf("filename: %s, filesize: %d", file.Filename, file.Size))
 
-	saveFile, err := os.OpenFile("./uploads/"+handler.Filename, os.O_WRONLY|os.O_CREATE, 0666)
+}
+
+func GetUploadedFiles(w http.ResponseWriter, r *http.Request) {
+	files, err := ioutil.ReadDir("./uploads")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	defer saveFile.Close()
-	io.Copy(saveFile, file)
 
-	fileName, fileSize := handler.Filename, handler.Size
+	for _, file := range files {
+		fmt.Fprintf(w, "%s\n", file.Name())
+	}
+}
+func bodySizeMiddleware(c *gin.Context) {
+	var w http.ResponseWriter = c.Writer
+	var maxBodyBytes int64 = 1024 * 1024 * 8 // 5MB
+	c.Request.Body = http.MaxBytesReader(w, c.Request.Body, maxBodyBytes)
 
-	fmt.Fprintf(w, "status: %d, filename: %s, filesize: %d", http.StatusAccepted, fileName, fileSize)
+	c.Next()
+}
 
+func setupRouter() *gin.Engine {
+	r := gin.Default()
+
+	r.MaxMultipartMemory = 8 << 20 // 8 MiB
+
+	r.Use(bodySizeMiddleware)
+
+	r.POST("/upload", HandleUpload)
+
+	return r
 }
 
 func main() {
 
-	// start server
-	http.HandleFunc("/upload", HandleUpload)
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	r := setupRouter()
+
+	r.Run()
 
 }
