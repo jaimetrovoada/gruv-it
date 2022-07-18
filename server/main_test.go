@@ -13,23 +13,44 @@ import (
 
 func TestMain(t *testing.T) {
 
-	tests := map[string]struct {
-		fileName,
-		fileSize,
-		filePath,
-		expect string
-	}{
+	type testExpected struct {
+		status int
+		file   string
+		size   int64
+	}
+
+	type testCase struct {
+		filename string
+		filepath string
+		expect   testExpected
+	}
+	tests := map[string]testCase{
 		"pngAvatar": {
-			fileName: "test.png",
-			fileSize: "58502",
-			filePath: "./test.png",
-			expect:   "status: 200, filename: test.png, filesize: 58502",
+			filename: "test.png",
+			filepath: "./test.png",
+			expect: testExpected{
+				status: http.StatusAccepted,
+				file:   "test.png",
+				size:   int64(58502),
+			},
 		},
 		"textFile": {
-			fileName: "test.txt",
-			fileSize: "0",
-			filePath: "./test.txt",
-			expect:   "status: 200, filename: test.txt, filesize: 58502",
+			filename: "test.txt",
+			filepath: "./test.txt",
+			expect: testExpected{
+				status: http.StatusAccepted,
+				file:   "test.txt",
+				size:   int64(0),
+			},
+		},
+		"bigJpeg": {
+			filename: "3.jpg",
+			filepath: "./3.jpg",
+			expect: testExpected{
+				status: http.StatusInternalServerError,
+				file:   "",
+				size:   int64(0),
+			},
 		},
 	}
 
@@ -42,14 +63,14 @@ func TestMain(t *testing.T) {
 		writer := multipart.NewWriter(body)
 
 		// This is the file we are going to upload
-		file, err := os.Open(tc.filePath)
+		file, err := os.Open(tc.filepath)
 		if err != nil {
 			t.Error(err)
 		}
 		defer file.Close()
 
 		// This is the file handler
-		fileWriter, err := writer.CreateFormFile("uploadImg", tc.filePath)
+		fileWriter, err := writer.CreateFormFile("uploadImg", tc.filepath)
 		if err != nil {
 			t.Error(err)
 		}
@@ -64,10 +85,8 @@ func TestMain(t *testing.T) {
 			t.Error(err)
 		}
 
-		// Close the pipe
-		// if err := pw.Close(); err != nil {
-		// 	t.Error(err)
-		// }
+
+		router := setupRouter()
 
 		// Create a new request
 		req, err := http.NewRequest(http.MethodPost, "/upload", body)
@@ -81,22 +100,19 @@ func TestMain(t *testing.T) {
 		// Create a new recorder
 		res := httptest.NewRecorder()
 
-		// Create a new server
-		handler := http.HandlerFunc(HandleUpload)
-
 		// Serve the request
-		handler.ServeHTTP(res, req)
+		router.ServeHTTP(res, req)
 
 		// Check the status code
-		// if status := res.Code; status != http.StatusAccepted {
-		// 	t.Errorf("test case: %v - handler returned wrong status code: got %v want %v",
-		// 		name, status, http.StatusAccepted)
-		// }
+		if status := res.Code; status != tc.expect.status {
+			t.Errorf("test case: %v - handler returned wrong status code: got %v want %v",
+				name, status, tc.expect.status)
+		}
 
 		// Check the response body
-		expected := fmt.Sprintf("status: %d, filename: %s, filesize: %s", http.StatusAccepted, tc.fileName, tc.fileSize)
+		expected := fmt.Sprintf("filename: %s, filesize: %d", tc.expect.file, tc.expect.size)
 		if res.Body.String() != expected {
-			t.Errorf("test case: %v - handler returned unexpected body: got %v want %v",
+			t.Errorf("test case: %v FAILED; got %v want %v",
 				name, res.Body.String(), expected)
 		}
 	}
