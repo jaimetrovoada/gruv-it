@@ -36,7 +36,7 @@ function App() {
   React.useEffect(() => {
     if (uploadSuccess) {
       axios({
-        url: `http://localhost:8080/image?file=gruvbox_${fileSelected?.name}`,
+        url: `http://localhost:8080/image?file=${fileSelected?.name}`,
         method: "GET",
         responseType: "arraybuffer",
       })

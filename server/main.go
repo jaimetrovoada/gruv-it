@@ -3,9 +3,7 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
-	"os/exec"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -18,7 +16,7 @@ func HandleUpload(c *gin.Context) {
 	// Upload the file to specific dst.
 	c.SaveUploadedFile(file, "./uploads/"+file.Filename)
 
-	gruvboxImg(file.Filename)
+	// gruvboxImg(file.Filename)
 
 	c.String(http.StatusAccepted, fmt.Sprintf("filename: %s, filesize: %d", file.Filename, file.Size))
 
@@ -70,16 +68,16 @@ func bodySizeMiddleware(c *gin.Context) {
 	c.Next()
 }
 
-func gruvboxImg(imageName string) {
-
-	cmd := exec.Command("gruvbox-factory", "-i", fmt.Sprintf("./uploads/%s", imageName))
-	err := cmd.Run()
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-}
+// func gruvboxImg(imageName string) {
+//
+// 	cmd := exec.Command("gruvbox-factory", "-i", fmt.Sprintf("./uploads/%s", imageName))
+// 	err := cmd.Run()
+//
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+//
+// }
 
 func setupRouter() *gin.Engine {
 	r := gin.Default()
