@@ -18,7 +18,10 @@ function App() {
       formData.append("uploadImg", fileSelected, fileSelected.name);
 
       axios
-        .post("http://localhost:8080/upload", formData)
+        .post(
+          `${process.env.REACT_APP_UPLOADER_SERVER as string}/upload`,
+          formData
+        )
         .then((res) => {
           setUploadSuccess(true);
           console.log("Upload Success", uploadSuccess);
@@ -36,7 +39,7 @@ function App() {
   React.useEffect(() => {
     if (uploadSuccess) {
       axios({
-        url: `http://localhost:8080/image?file=${fileSelected?.name}`,
+        url: `${process.env.REACT_APP_UPLOADER_SERVER}/image?file=${fileSelected?.name}`,
         method: "GET",
         responseType: "arraybuffer",
       })
