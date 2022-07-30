@@ -18,11 +18,9 @@ function App() {
       formData.append("uploadImg", fileSelected, fileSelected.name);
 
       axios
-        .post(
-          `${process.env.REACT_APP_UPLOADER_SERVER as string}/upload`,
-          formData
-        )
+        .post(`${process.env.REACT_APP_UPLOADER_SERVER}/upload`, formData)
         .then((res) => {
+          console.log(res);
           setUploadSuccess(true);
           console.log("Upload Success", uploadSuccess);
           alert("File Upload success");
@@ -39,7 +37,9 @@ function App() {
   React.useEffect(() => {
     if (uploadSuccess) {
       axios({
-        url: `${process.env.REACT_APP_UPLOADER_SERVER}/image?file=${fileSelected?.name}`,
+        url: `${process.env.REACT_APP_UPLOADER_SERVER}/image?file=${
+          process.env.NODE_ENV === "production" ? "" : "gruvbox_"
+        }${fileSelected?.name}`,
         method: "GET",
         responseType: "arraybuffer",
       })
@@ -85,7 +85,9 @@ function App() {
             <img src={gruvFile} alt="Upload" />
             <a
               download
-              href={`http://localhost:8080/image?file=gruvbox_${fileSelected?.name}`}
+              href={`${process.env.REACT_APP_UPLOADER_SERVER}/image?file=${
+                process.env.NODE_ENV === "production" ? "" : "gruvbox_"
+              }${fileSelected?.name}`}
             >
               <i className="fa fa-download" />
               download

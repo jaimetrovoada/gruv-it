@@ -3,7 +3,10 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
+	"os"
+	"os/exec"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -16,7 +19,10 @@ func HandleUpload(c *gin.Context) {
 	// Upload the file to specific dst.
 	c.SaveUploadedFile(file, "./uploads/"+file.Filename)
 
-	// gruvboxImg(file.Filename)
+	env := getEnv()
+	if env == "dev" {
+		gruvboxImg(file.Filename)
+	}
 
 	c.String(http.StatusAccepted, fmt.Sprintf("filename: %s, filesize: %d", file.Filename, file.Size))
 
@@ -24,28 +30,6 @@ func HandleUpload(c *gin.Context) {
 func HandleGetUploadedFile(c *gin.Context) {
 
 	filename := c.DefaultQuery("file", "unknown")
-	// file, err := ioutil.ReadFile(fmt.Sprintf("./uploads/%s", filename))
-	// if err != nil {
-	// 	fmt.Println(err)
-	// 	return
-	// }
-	// fi, err := os.Stat(fmt.Sprintf("./uploads/%s", filename))
-	// if err != nil {
-	// 	log.Fatalf("error getting uploaded file")
-	// 	return
-	// }
-	//
-	// reader := file
-	// defer reader.Close()
-	//
-	// contentLength := fi.Size()
-	// contentType := "application/octet-stream"
-	//
-	// extraHeaders := map[string]string{
-	// 	"Content-Disposition": fmt.Sprintf(`attachment; filename="gopher.png"`, filename),
-	// }
-	//
-	// c.DataFromReader(http.StatusOK, contentLength, contentType, reader, extraHeaders)
 	c.File(fmt.Sprintf("./uploads/%s", filename))
 }
 
@@ -68,16 +52,16 @@ func bodySizeMiddleware(c *gin.Context) {
 	c.Next()
 }
 
-// func gruvboxImg(imageName string) {
-//
-// 	cmd := exec.Command("gruvbox-factory", "-i", fmt.Sprintf("./uploads/%s", imageName))
-// 	err := cmd.Run()
-//
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-//
-// }
+func gruvboxImg(imageName string) {
+
+	cmd := exec.Command("gruvbox-factory", "-i", fmt.Sprintf("./uploads/%s", imageName))
+	err := cmd.Run()
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+}
 
 func setupRouter() *gin.Engine {
 	r := gin.Default()
@@ -94,7 +78,19 @@ func setupRouter() *gin.Engine {
 	r.POST("/upload", HandleUpload)
 	r.GET("/image", HandleGetUploadedFile)
 
+	fmt.Printf("env: %s\n", getEnv())
+
 	return r
+}
+
+func getEnv() string {
+	// err := godotenv.Load(".env")
+	//
+	// if err != nil {
+	// 	log.Fatalf("Error loading .env file")
+	// }
+
+	return os.Getenv("APP_ENV")
 }
 
 func main() {
