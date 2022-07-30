@@ -37,9 +37,7 @@ function App() {
   React.useEffect(() => {
     if (uploadSuccess) {
       axios({
-        url: `${process.env.REACT_APP_UPLOADER_SERVER}/image?file=${
-          process.env.NODE_ENV === "production" ? "" : "gruvbox_"
-        }${fileSelected?.name}`,
+        url: `${process.env.REACT_APP_UPLOADER_SERVER}/image?file=gruvbox_${fileSelected?.name}`,
         method: "GET",
         responseType: "arraybuffer",
       })
@@ -85,9 +83,7 @@ function App() {
             <img src={gruvFile} alt="Upload" />
             <a
               download
-              href={`${process.env.REACT_APP_UPLOADER_SERVER}/image?file=${
-                process.env.NODE_ENV === "production" ? "" : "gruvbox_"
-              }${fileSelected?.name}`}
+              href={`${process.env.REACT_APP_UPLOADER_SERVER}/image?file=gruvbox_${fileSelected?.name}`}
             >
               <i className="fa fa-download" />
               download
