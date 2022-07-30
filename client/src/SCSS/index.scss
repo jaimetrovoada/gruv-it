@@ -1,0 +1,129 @@
+// @import "./varaibles", "./display", "./search", "./modal";
+// some resets
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+figure {
+  margin: 0;
+}
+
+select {
+  outline: none;
+  border: none;
+}
+
+//styles
+/* custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 5px;
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background-color: #eee6ce;
+  /* border: 2px solid #eff1f5; */
+}
+
+body {
+  /* font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif; */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 16px;
+  font-weight: 400;
+  height: 100vh;
+  background-color: #282828;
+  overflow: overlay;
+}
+
+.App {
+  height: 100vh;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.container {
+  &--upload {
+    width: 250px;
+    height: 150px;
+    border: 1px solid #ebdbb2;
+    border-radius: 10px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 25px;
+    @media only screen and (min-width: 1440px) {
+      width: 500px;
+      height: 250px;
+    }
+  }
+  &--files {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    justify-content: space-around;
+    align-items: center;
+    > div {
+      width: 250px;
+      height: 150px;
+      max-width: 250px;
+      max-height: 150px;
+      padding: 2px;
+      border: 1px solid #ebdbb2;
+      border-radius: 10px;
+      @media only screen and (min-width: 1440px) {
+        width: 500px;
+        height: 250px;
+        max-width: 500px;
+        max-height: 250px;
+      }
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-rows: 1fr;
+      &:hover {
+        .buttonContainer {
+          visibility: visible;
+        }
+      }
+      .buttonContainer {
+        z-index: 100;
+        height: 100%;
+        width: 100%;
+        background-color: #ebdbb233;
+        backdrop-filter: blur(10px);
+        visibility: hidden;
+        grid-column: 1/2;
+        grid-row: 1/2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      img {
+        width: 250px;
+        height: 150px;
+        max-width: 250px;
+        max-height: 150px;
+        grid-column: 1/2;
+        grid-row: 1/2;
+        @media only screen and (min-width: 1440px) {
+          width: 100%;
+          height: 100%;
+          max-width: 500px;
+          max-height: 250px;
+        }
+      }
+    }
+  }
+}
