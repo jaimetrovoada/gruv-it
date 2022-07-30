@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 	"os/exec"
 
 	"github.com/gin-contrib/cors"
@@ -19,10 +18,7 @@ func HandleUpload(c *gin.Context) {
 	// Upload the file to specific dst.
 	c.SaveUploadedFile(file, "./uploads/"+file.Filename)
 
-	env := getEnv()
-	if env == "dev" {
-		gruvboxImg(file.Filename)
-	}
+	gruvboxImg(file.Filename)
 
 	c.String(http.StatusAccepted, fmt.Sprintf("filename: %s, filesize: %d", file.Filename, file.Size))
 
@@ -54,7 +50,7 @@ func bodySizeMiddleware(c *gin.Context) {
 
 func gruvboxImg(imageName string) {
 
-	cmd := exec.Command("gruvbox-factory", "-i", fmt.Sprintf("./uploads/%s", imageName))
+	cmd := exec.Command("python", "./gruvbox_factory/factory/__main__.py", "-i", fmt.Sprintf("./uploads/%s", imageName))
 	err := cmd.Run()
 
 	if err != nil {
@@ -78,19 +74,7 @@ func setupRouter() *gin.Engine {
 	r.POST("/upload", HandleUpload)
 	r.GET("/image", HandleGetUploadedFile)
 
-	fmt.Printf("env: %s\n", getEnv())
-
 	return r
-}
-
-func getEnv() string {
-	// err := godotenv.Load(".env")
-	//
-	// if err != nil {
-	// 	log.Fatalf("Error loading .env file")
-	// }
-
-	return os.Getenv("APP_ENV")
 }
 
 func main() {
