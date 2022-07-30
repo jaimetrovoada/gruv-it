@@ -50,7 +50,7 @@ func bodySizeMiddleware(c *gin.Context) {
 
 func gruvboxImg(imageName string) {
 
-	cmd := exec.Command("python3", "./gruvbox_factory/factory/__main__.py", "-i", fmt.Sprintf("./uploads/%s", imageName))
+	cmd := exec.Command("gruvbox-factory", "-i", fmt.Sprintf("./uploads/%s", imageName))
 	err := cmd.Run()
 
 	if err != nil {

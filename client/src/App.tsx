@@ -1,5 +1,6 @@
 import axios from "axios";
 import React from "react";
+import "./index.css";
 
 function App() {
   const [fileSelected, setSelectedFile] = React.useState<File>();
@@ -39,17 +40,12 @@ function App() {
       axios({
         url: `${process.env.REACT_APP_UPLOADER_SERVER}/image?file=gruvbox_${fileSelected?.name}`,
         method: "GET",
-        responseType: "arraybuffer",
+        responseType: "blob",
+        headers: { "Content-Type": "image/*" },
       })
         .then((response) => {
-          console.log(response);
-          const base64 = btoa(
-            new Uint8Array(response.data).reduce(
-              (data, byte) => data + String.fromCharCode(byte),
-              ""
-            )
-          );
-          setGruvFile(`data:;base64,${base64}`);
+          const imageUrl = URL.createObjectURL(response.data);
+          setGruvFile(imageUrl);
         })
         .catch((err) => {
           console.log(err);
@@ -59,36 +55,44 @@ function App() {
 
   return (
     <div className="App">
-      <label htmlFor="photo">
-        <input
-          accept="image/*"
-          // style={{ display: "none" }}
-          id="uploadImg"
-          name="uploadImg"
-          type="file"
-          multiple={false}
-          onChange={onFileChange}
-        />
+      <div className="container--upload">
+        <label htmlFor="photo">
+          <input
+            accept="image/*"
+            // style={{ display: "none" }}
+            title="Choose Photo"
+            id="uploadImg"
+            name="uploadImg"
+            type="file"
+            multiple={false}
+            onChange={onFileChange}
+            className="btn btn-filepicker"
+          />
 
-        <button onClick={onFileUpload}>Choose Picture</button>
-      </label>
-      <div>
-        {fileSelected && (
-          <img src={URL.createObjectURL(fileSelected)} alt="Upload" />
-        )}
+          <button className="btn btn-upload" onClick={onFileUpload}>
+            Upload
+          </button>
+        </label>
       </div>
-      <div>
+      <div className="container--files">
+        {fileSelected && (
+          <div>
+            <img src={URL.createObjectURL(fileSelected)} alt="Upload" />
+          </div>
+        )}
         {gruvFile ? (
-          <>
+          <div>
             <img src={gruvFile} alt="Upload" />
-            <a
-              download
-              href={`${process.env.REACT_APP_UPLOADER_SERVER}/image?file=gruvbox_${fileSelected?.name}`}
-            >
-              <i className="fa fa-download" />
-              download
-            </a>
-          </>
+            <div className="buttonContainer">
+              <a
+                download
+                href={`${process.env.REACT_APP_UPLOADER_SERVER}/image?file=gruvbox_${fileSelected?.name}`}
+              >
+                <i className="fa fa-download" />
+                download
+              </a>
+            </div>
+          </div>
         ) : null}
       </div>
     </div>
