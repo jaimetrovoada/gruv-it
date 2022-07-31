@@ -3,7 +3,7 @@
 # Gruvbox your images
 
 **Backend**
-- Go
+- Go + Gin
 - Docker
 
 **Frontend**
