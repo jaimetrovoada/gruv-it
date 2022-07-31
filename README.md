@@ -3,8 +3,15 @@
 # Gruvbox your images
 
 **Backend**
+
 - Go + Gin
 - Docker
 
 **Frontend**
+
 - React
+
+**TO DO**
+
+- [x] add loading indicator
+- [ ] add palette options
