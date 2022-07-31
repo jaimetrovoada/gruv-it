@@ -4,10 +4,13 @@ import "./index.css";
 
 function App() {
   const [fileSelected, setSelectedFile] = React.useState<File>();
-  const [uploadSuccess, setUploadSuccess] = React.useState<boolean>(false);
+  const [uploadSuccess, setUploadSuccess] = React.useState<boolean>();
   const [gruvFile, setGruvFile] = React.useState<any>();
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUploadSuccess(undefined);
+    setGruvFile(undefined);
     if (e.target.files && e.target.files[0]) {
       setSelectedFile(e.target.files[0]);
     }
@@ -17,24 +20,25 @@ function App() {
     if (fileSelected) {
       const formData = new FormData();
       formData.append("uploadImg", fileSelected, fileSelected.name);
+      setIsLoading(true);
 
       axios
         .post(`${process.env.REACT_APP_UPLOADER_SERVER}/upload`, formData)
         .then((res) => {
           console.log(res);
           setUploadSuccess(true);
-          console.log("Upload Success", uploadSuccess);
-          alert("File Upload success");
         })
         .catch((err) => {
-          alert("File Upload Error");
           console.log(err);
-        });
+          setUploadSuccess(false);
+        })
+        .finally(() => setIsLoading(false));
     }
 
     console.log(fileSelected);
   };
 
+  console.log("Upload Success", uploadSuccess);
   React.useEffect(() => {
     if (uploadSuccess) {
       axios({
@@ -51,7 +55,27 @@ function App() {
           console.log(err);
         });
     }
-  }, [uploadSuccess, fileSelected]);
+  }, [fileSelected?.name, uploadSuccess]);
+
+  console.log({ isLoading });
+  const getStatus = (): string => {
+    if (fileSelected && isLoading === false && uploadSuccess !== true) {
+      return "Click upload";
+    }
+    if (isLoading === true) {
+      return "Uploading...";
+    }
+    if (isLoading === false && uploadSuccess === true) {
+      return "Uploaded successfully";
+    }
+
+    if (isLoading === false && uploadSuccess === false) {
+      return "Couldn't upload your file, please try again.";
+    }
+
+    return "Please select a file to upload";
+  };
+  console.log({ gruvFile });
 
   return (
     <div className="App">
@@ -70,9 +94,19 @@ function App() {
           />
 
           <button className="btn btn-upload" onClick={onFileUpload}>
+            <i className="fa fa-upload" />
             Upload
           </button>
         </label>
+        <span>Status: {getStatus()}</span>
+        {isLoading ? (
+          <>
+            <i
+              className="fa fa-spinner fa-spin fa-3x fa-fw"
+              style={{ color: "#ebdbb2" }}
+            />
+          </>
+        ) : null}
       </div>
       <div className="container--files">
         {fileSelected && (
@@ -83,15 +117,14 @@ function App() {
         {gruvFile ? (
           <div>
             <img src={gruvFile} alt="Upload" />
-            <div className="buttonContainer">
-              <a
-                download
-                href={`${process.env.REACT_APP_UPLOADER_SERVER}/image?file=gruvbox_${fileSelected?.name}`}
-              >
-                <i className="fa fa-download" />
-                download
-              </a>
-            </div>
+            <a
+              className="buttonContainer"
+              download={`gruv_${fileSelected?.name}`}
+              href={gruvFile}
+            >
+              <i className="fa fa-download" />
+              &nbsp;Download
+            </a>
           </div>
         ) : null}
       </div>
