@@ -1,6 +1,8 @@
 // @import "./varaibles", "./display", "./search", "./modal";
 // some resets
-* {
+*,
+*::before,
+*::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -58,18 +60,85 @@ body {
   &--upload {
     width: 250px;
     height: 150px;
+    max-width: 250px;
+    max-height: 150px;
     border: 1px solid #ebdbb2;
     border-radius: 10px;
     padding: 10px;
     display: flex;
     flex-direction: column;
+    gap: 15px;
     margin-bottom: 25px;
     @media only screen and (min-width: 1440px) {
-      width: 500px;
-      height: 250px;
+      width: 750px;
+      height: 500px;
+      max-width: 750px;
+      max-height: 500px;
     }
+
     span {
       color: #ebdbb2;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+    .file {
+      background-color: #ebdbb2;
+      color: #282828;
+      border-radius: 10px;
+      display: inline-block;
+      padding: 6px 10px;
+      cursor: pointer;
+      &:hover {
+        background-color: #fbf1c7;
+      }
+    }
+
+    .btn--container {
+      flex: 0 0 auto;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-around;
+      select {
+        margin-left: 10px;
+      }
+    }
+    .imageViewer {
+      flex: 1 0;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      max-width: 100%;
+      max-height: 100%;
+      img {
+        max-width: 100%;
+        max-height: 100%;
+      }
+    }
+    .uploadBtnContainer {
+      flex: 0 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      .btn-upload {
+        background-color: #ebdbb2;
+        color: #282828;
+        border-radius: 10px;
+        padding: 6px 10px;
+        margin: 0 auto;
+        border: none;
+        cursor: pointer;
+        &:hover {
+          background-color: #fbf1c7;
+        }
+        &:disabled {
+          background-color: #3c3836;
+        }
+      }
     }
   }
   &--files {
@@ -89,6 +158,7 @@ body {
       padding: 2px;
       border: 1px solid #ebdbb2;
       border-radius: 10px;
+      overflow: hidden;
       @media only screen and (min-width: 1440px) {
         width: 500px;
         height: 250px;
