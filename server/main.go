@@ -41,27 +41,6 @@ func gruvboxImg(imageName string, palette string) {
 		if err := os.Rename(fmt.Sprintf("./uploads/gruvbox_%s", imageName), fmt.Sprintf("./uploads/gruvbox_pink_%s", imageName)); err != nil {
 			log.Fatal(err)
 		}
-		/* ch := make(chan error)
-		go func() {
-			ch <- cmd.Run()
-		}()
-		select {
-		case err := <-ch:
-			// done! check error
-			if err != nil {
-				log.Fatal(err)
-			}
-
-			if err := os.Rename(fmt.Sprintf("./uploads/gruvbox_%s", imageName), fmt.Sprintf("./uploads/gruvbox_pink_%s", imageName)); err != nil {
-				log.Fatal(err)
-			}
-
-		case <-time.After(60 * time.Second):
-			if err := cmd.Process.Kill(); err != nil {
-				log.Fatal("failed to kill process: ", err)
-			}
-			log.Println("process killed as timeout reached")
-		} */
 
 		cmdTwo := exec.Command("gruvbox-factory", "-p", "white", "-i", fmt.Sprintf("./uploads/%s", imageName))
 		if err := cmdTwo.Run(); err != nil {
@@ -70,27 +49,6 @@ func gruvboxImg(imageName string, palette string) {
 		if err := os.Rename(fmt.Sprintf("./uploads/gruvbox_%s", imageName), fmt.Sprintf("./uploads/gruvbox_white_%s", imageName)); err != nil {
 			log.Fatal(err)
 		}
-		/* ch2 := make(chan error)
-		go func() {
-			ch2 <- cmdTwo.Run()
-		}()
-		select {
-		case err := <-ch:
-			// done! check error
-			if err != nil {
-				log.Fatal(err)
-			}
-			if err := os.Rename(fmt.Sprintf("./uploads/gruvbox_%s", imageName), fmt.Sprintf("./uploads/gruvbox_white_%s", imageName)); err != nil {
-				log.Fatal(err)
-			}
-
-		case <-time.After(60 * time.Second):
-			if err := cmd.Process.Kill(); err != nil {
-				log.Fatal("failed to kill process: ", err)
-			}
-			log.Println("process killed as timeout reached")
-		} */
-
 	} else {
 
 		cmd := exec.Command("gruvbox-factory", "-p", palette, "-i", fmt.Sprintf("./uploads/%s", imageName))
