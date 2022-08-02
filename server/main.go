@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"os/exec"
 
 	"github.com/gin-contrib/cors"
@@ -13,12 +13,13 @@ import (
 
 func HandleUpload(c *gin.Context) {
 
+	palette := c.DefaultQuery("palette", "unknown")
 	file, _ := c.FormFile("uploadImg")
 
 	// Upload the file to specific dst.
 	c.SaveUploadedFile(file, "./uploads/"+file.Filename)
 
-	gruvboxImg(file.Filename)
+	gruvboxImg(file.Filename, palette)
 
 	c.String(http.StatusAccepted, fmt.Sprintf("filename: %s, filesize: %d", file.Filename, file.Size))
 
@@ -29,34 +30,42 @@ func HandleGetUploadedFile(c *gin.Context) {
 	c.File(fmt.Sprintf("./uploads/%s", filename))
 }
 
-func GetUploadedFiles(w http.ResponseWriter, r *http.Request) {
-	files, err := ioutil.ReadDir("./uploads")
-	if err != nil {
-		fmt.Println(err)
-		return
+func gruvboxImg(imageName string, palette string) {
+
+	if palette == "both" {
+
+		cmd := exec.Command("gruvbox-factory", "-p", "pink", "-i", fmt.Sprintf("./uploads/%s", imageName))
+		if err := cmd.Run(); err != nil {
+			log.Fatal(err)
+		}
+		if err := os.Rename(fmt.Sprintf("./uploads/gruvbox_%s", imageName), fmt.Sprintf("./uploads/gruvbox_pink_%s", imageName)); err != nil {
+			log.Fatal(err)
+		}
+
+		cmdTwo := exec.Command("gruvbox-factory", "-p", "white", "-i", fmt.Sprintf("./uploads/%s", imageName))
+		if err := cmdTwo.Run(); err != nil {
+			log.Fatal(err)
+		}
+		if err := os.Rename(fmt.Sprintf("./uploads/gruvbox_%s", imageName), fmt.Sprintf("./uploads/gruvbox_white_%s", imageName)); err != nil {
+			log.Fatal(err)
+		}
+	} else {
+
+		cmd := exec.Command("gruvbox-factory", "-p", palette, "-i", fmt.Sprintf("./uploads/%s", imageName))
+		err := cmd.Run()
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
-	for _, file := range files {
-		fmt.Fprintf(w, "%s\n", file.Name())
-	}
 }
+
 func bodySizeMiddleware(c *gin.Context) {
 	var w http.ResponseWriter = c.Writer
 	var maxBodyBytes int64 = 1024 * 1024 * 8 // 5MB
 	c.Request.Body = http.MaxBytesReader(w, c.Request.Body, maxBodyBytes)
 
 	c.Next()
-}
-
-func gruvboxImg(imageName string) {
-
-	cmd := exec.Command("gruvbox-factory", "-i", fmt.Sprintf("./uploads/%s", imageName))
-	err := cmd.Run()
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
 }
 
 func setupRouter() *gin.Engine {
