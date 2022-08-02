@@ -146,11 +146,11 @@ function App() {
             </select>
           </div>
         </div>
-        {fileSelected && (
-          <div className="imageViewer">
+        <div className="imageViewer">
+          {fileSelected && (
             <img src={URL.createObjectURL(fileSelected)} alt="Upload" />
-          </div>
-        )}
+          )}
+        </div>
         <div className="uploadBtnContainer">
           <button
             className="btn btn-upload"
