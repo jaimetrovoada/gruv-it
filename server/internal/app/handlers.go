@@ -27,11 +27,23 @@ func (s *Server) HandleUpload() gin.HandlerFunc {
 		file, _ := c.FormFile("uploadImg")
 
 		// Upload the file to specific dst.
-		c.SaveUploadedFile(file, "./uploads/"+file.Filename)
+		if err := c.SaveUploadedFile(file, "./uploads/"+file.Filename); err != nil {
+			c.JSON(http.StatusInternalServerError, "Upload Failed")
+		}
 
-		GruvboxImg(file.Filename, palette)
+		successRes := map[string]interface{}{
+			"filename": file.Filename,
+			"filesize": file.Size,
+		}
+		c.JSON(http.StatusAccepted, successRes)
 
-		c.String(http.StatusAccepted, fmt.Sprintf("filename: %s, filesize: %d", file.Filename, file.Size))
+		if err := GruvboxImg(file.Filename, palette); err != nil {
+			gruvboxFailedRes := map[string]interface{}{
+				"message": "Failed to gruvbox the image(s)",
+				"error":   err,
+			}
+			c.JSON(http.StatusInternalServerError, gruvboxFailedRes)
+		}
 	}
 }
 
