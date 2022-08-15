@@ -21,4 +21,4 @@ RUN go build -v -o /usr/local/bin/app/ ./...
 ENV CGO_ENABLED=0 
 ENV GOOS=linux
 
-CMD ["./bin/server"]
+CMD ["/usr/local/bin/app/server"]
