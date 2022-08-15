@@ -1,9 +1,9 @@
-FROM golang:1.18.4-bullseye
+FROM golang:latest
 
 WORKDIR /usr/src/app
 
 # isntall python and toolset
-RUN apt-get update
+RUN apt-get update && apt-get upgrade -y
 RUN apt-get -y install python3
 RUN apt-get -y install python3-setuptools
 RUN apt-get -y install python3-pip
@@ -16,6 +16,9 @@ RUN pip install gruvbox-factory
 COPY . .
 ENV PORT=8080
 EXPOSE 8080
-RUN go build -v -o /usr/local/bin/app ./...
+RUN go build -v -o /usr/local/bin/app/ ./...
 
-CMD ["app"]
+ENV CGO_ENABLED=0 
+ENV GOOS=linux
+
+CMD ["./bin/server"]
