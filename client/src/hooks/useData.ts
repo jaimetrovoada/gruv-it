@@ -1,16 +1,16 @@
 import React from "react";
 import axios, { AxiosPromise } from "axios";
 
-const RELOAD_INTERVAL = 5000;
-const useRefresh = () => {
-  const [reload, setReload] = React.useState(0);
-  React.useEffect(() => {
-    const interval = setInterval(async () => {
-      setReload((prev) => prev + 1);
-    }, RELOAD_INTERVAL);
-  });
-  return reload;
-};
+// const RELOAD_INTERVAL = 5000;
+// const useRefresh = () => {
+//   const [reload, setReload] = React.useState(0);
+//   React.useEffect(() => {
+//     const interval = setInterval(async () => {
+//       setReload((prev) => prev + 1);
+//     }, RELOAD_INTERVAL);
+//   });
+//   return reload;
+// };
 
 const useData = (
   status: "SUCCESS" | "WAITING" | "UPLOADING" | "FAILED",
