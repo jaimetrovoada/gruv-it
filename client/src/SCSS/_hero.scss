@@ -1,0 +1,20 @@
+.heroSection {
+  width: 100vw;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  &--paragraph {
+    color: #ebdbb2;
+    &-title {
+      font-family: cursive, monospace;
+      font-size: 4rem;
+      text-shadow: 0 0 20px #ebdbb2;
+    }
+    &-sub {
+      font-size: 1.5rem;
+    }
+  }
+}
