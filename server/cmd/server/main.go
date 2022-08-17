@@ -23,7 +23,7 @@ func run() error {
 	r.MaxMultipartMemory = 8 << 20 // 8 MiB
 
 	config := cors.DefaultConfig()
-	config.AllowAllOrigins = true
+	config.AllowOrigins = []string{"http://localhost:3000", "https://gruvit.netlify.app"}
 	config.AllowMethods = []string{"GET", "POST"}
 	config.AllowHeaders = []string{"Origin"}
 
