@@ -12,8 +12,7 @@ func (s *Server) ApiStatus() gin.HandlerFunc {
 		c.Header("Content-Type", "application/json")
 
 		response := map[string]string{
-			"status": "success",
-			"data":   "gruvIt is running",
+			"status": "UP",
 		}
 
 		c.JSON(http.StatusOK, response)
