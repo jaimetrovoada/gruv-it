@@ -14,6 +14,7 @@ RUN go mod download && go mod verify
 RUN pip install gruvbox-factory
 
 COPY . .
+ENV GIN_MODE=release
 ENV PORT=8080
 EXPOSE 8080
 RUN go build -v -o /usr/local/bin/app/ ./...
