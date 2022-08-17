@@ -1,5 +1,5 @@
 import React from "react";
-import { useData } from "../hooks/";
+import { useData, useServerStatus } from "../hooks/";
 import axios from "axios";
 import { Container } from "../components/";
 
@@ -13,6 +13,7 @@ const Main = () => {
 
   const [data, setData] = useData(status, palette, fileSelected);
   console.log({ data });
+  const serverStatus = useServerStatus();
 
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setStatus("WAITING");
@@ -72,6 +73,10 @@ const Main = () => {
       return "Couldn't upload your file, please try again.";
     }
 
+    if (serverStatus === "DOWN") {
+      return "Server is down please try again later.";
+    }
+
     return "Please select a file to upload";
   };
   return (
@@ -125,7 +130,7 @@ const Main = () => {
           <button
             className="main--btn main--btn-upload"
             onClick={onFileUpload}
-            disabled={!fileSelected}
+            disabled={!fileSelected || serverStatus === "DOWN"}
           >
             <i className="fa fa-cloud-upload" />
             &nbsp;Upload
