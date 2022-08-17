@@ -1,6 +1,7 @@
 import React from "react";
 import { useData } from "../hooks/";
 import axios from "axios";
+import { Container } from "../components/";
 
 const Main = () => {
   const [fileSelected, setSelectedFile] = React.useState<File>();
@@ -75,9 +76,9 @@ const Main = () => {
   };
   return (
     <div className="main">
-      <div className="container--upload">
-        <div className="btn--container">
-          <label htmlFor="file" className="file">
+      <Container className="main--container-upload">
+        <div className="main--btnContainer">
+          <label htmlFor="file" className="main--btn main--btn-filepicker">
             <input
               accept="image/png, image/jpeg"
               //style={{ display: "none" }}
@@ -87,12 +88,11 @@ const Main = () => {
               type="file"
               multiple={false}
               onChange={onFileChange}
-              className="btn btn-filepicker"
             />
             Browse Files
           </label>
-          <div>
-            <span>Color Palette</span>
+          <div className="main--palettePicker">
+            <p>Color Palette</p>
             <select
               name="palette"
               id="palette"
@@ -105,49 +105,51 @@ const Main = () => {
             </select>
           </div>
         </div>
-        <div className="imageViewer">
+        <div className="main--imagePreview">
           {fileSelected && (
             <img src={URL.createObjectURL(fileSelected)} alt="Upload" />
           )}
         </div>
-        <div className="uploadBtnContainer">
-          <button
-            className="btn btn-upload"
-            onClick={onFileUpload}
-            disabled={!fileSelected}
-          >
-            <i className="fa fa-cloud-upload" />
-            Upload
-          </button>
-          <div className="statusContainer">
+        <div className="main--btnContainer">
+          <div>
             <span>Status: {getStatus()}</span>
             {status === "UPLOADING" ? (
               <>
                 <i
-                  className="fa fa-spinner fa-spin fa-3x fa-fw"
+                  className="fa fa-spinner fa-spin fa-1x fa-fw"
                   style={{ color: "#ebdbb2" }}
                 />
               </>
             ) : null}
           </div>
+          <button
+            className="main--btn main--btn-upload"
+            onClick={onFileUpload}
+            disabled={!fileSelected}
+          >
+            <i className="fa fa-cloud-upload" />
+            &nbsp;Upload
+          </button>
         </div>
-      </div>
+      </Container>
 
-      <div className="container--files">
+      <div className="main--display">
         {data && data.length > 0
-          ? // eslint-disable-next-line array-callback-return
-            data.map((img, index) => (
-              <div key={`gruv_${index}`}>
+          ? data.map((img, index) => (
+              <Container
+                className="main--container-files"
+                key={`gruv_${index}`}
+              >
                 <img src={img} alt="Upload" />
                 <a
-                  className="buttonContainer"
+                  className="main--btn-download"
                   download={`gruv_${fileSelected?.name}`}
                   href={img}
                 >
                   <i className="fa fa-download" />
                   &nbsp;Download
                 </a>
-              </div>
+              </Container>
             ))
           : null}
       </div>

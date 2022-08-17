@@ -1,0 +1,15 @@
+.container {
+  width: 100%;
+  max-width: calc(100% - 4rem);
+  height: 300px;
+  max-height: 300px;
+  border: 1px solid #ebdbb2;
+  border-radius: 10px;
+  padding: 10px;
+  @media only screen and (min-width: 769px) {
+    width: 750px;
+    height: 500px;
+    max-width: 750px;
+    max-height: 500px;
+  }
+}
