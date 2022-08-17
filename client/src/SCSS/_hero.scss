@@ -9,12 +9,18 @@
   &--paragraph {
     color: #ebdbb2;
     &-title {
-      font-family: cursive, monospace;
+      font-family: "DynaPuff", cursive, monospace;
       font-size: 4rem;
       text-shadow: 0 0 20px #ebdbb2;
+      @media only screen and (min-width: 769px) {
+        font-size: 8rem;
+      }
     }
     &-sub {
-      font-size: 1.5rem;
+      font-size: 1rem;
+      @media only screen and (min-width: 769px) {
+        font-size: 1.5rem;
+      }
     }
   }
 }
